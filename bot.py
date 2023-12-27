@@ -1,4 +1,6 @@
 import asyncio
+import json
+
 from aiogram import Dispatcher, Bot, F
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -33,16 +35,26 @@ async def name(message: Message, state: FSMContext):
     await state.set_state(Profile.age)
 
 @dp.message(Profile.age)
-async def name(message: Message, state: FSMContext):
+async def age(message: Message, state: FSMContext):
     await state.update_data(age=message.text)
     await message.answer("Хорошо, какой твой любимый цвет?")
     await state.set_state(Profile.color)
 
 @dp.message(Profile.color)
-async def name(message: Message, state: FSMContext):
+async def color(message: Message, state: FSMContext):
     await state.update_data(color=message.text)
     await message.answer("Хорошо, в какой ты группе?")
     await state.set_state(Profile.group)
+
+@dp.message(Profile.group)
+async def group(message: Message, state: FSMContext):
+    await state.update_data(group=message.text)
+    await message.answer("Спасибо!")
+    data = await state.get_data()
+    await state.clear()
+    user_id = message.from_user.id
+    with open(f"{user_id}.json", 'w', encoding='utf-8') as f:
+        json.dump(data, f)
 
 # @dp.message(Command("start"))
 # async def start(message: Message) -> None:
