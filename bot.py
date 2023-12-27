@@ -36,6 +36,9 @@ async def name(message: Message, state: FSMContext):
 
 @dp.message(Profile.age)
 async def age(message: Message, state: FSMContext):
+    if not message.text.isdigit():
+        await message.answer("Это не число!")
+        return
     await state.update_data(age=message.text)
     await message.answer("Хорошо, какой твой любимый цвет?")
     await state.set_state(Profile.color)
